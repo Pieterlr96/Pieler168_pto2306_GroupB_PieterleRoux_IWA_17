@@ -34,7 +34,7 @@ const createData = () => {
     const startDay = current.getDay();
     const daysInMonth = getDaysInMonth(current);
 
-    const weeks = createArray(5); // Assuming 5 weeks in a month
+    const weeks = createArray(5); 
     const result = [];
 
     for (const weekIndex of weeks) {
@@ -58,10 +58,15 @@ const createData = () => {
 };
 
 
-const addCell = (existing, classString, value) => {
+const addCell = (existing, classString, value, isToday) => {
+    let cellClass = classString;
+    if (isToday) {
+        cellClass += ' table__cell_today';
+    }
+
     const result = `
         ${existing}
-        <td class="${classString}">
+        <td class="${cellClass}">
             &nbsp;${value}&nbsp;
         </td>
     `;
@@ -72,12 +77,16 @@ const addCell = (existing, classString, value) => {
 const createHtml = (data) => {
     let result = '';
 
+    const today = new Date();
+    const currentDay = today.getDate();
+    const currentMonth = today.getMonth();
+
     for (const { week, days } of data) {
         let inner = '';
         inner = addCell(inner, 'table__cell table__cell_sidebar', `Week ${week}`);
 
         for (const { dayOfWeek, value } of days) {
-            const isToday = new Date().getDate() === value;
+            const isToday = value === currentDay && currentMonth === new Date().getMonth();
             const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
             const isAlternate = week % 2 === 0;
 
@@ -87,7 +96,7 @@ const createHtml = (data) => {
             if (isWeekend) classString = `${classString} table__cell_weekend`;
             if (isAlternate) classString = `${classString} table__cell_alternate`;
 
-            inner = addCell(inner, classString, value);
+            inner = addCell(inner, classString, value, isToday);
         }
 
         result = `
