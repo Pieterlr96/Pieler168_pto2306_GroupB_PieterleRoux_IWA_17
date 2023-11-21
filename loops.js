@@ -18,96 +18,94 @@ const getDaysInMonth = (date) => new Date(date.getFullYear(), date.getMonth() + 
 // Only edit below 
 
 const createArray = (length) => {
-    const result = [];
+    const result = []
 
     for (let i = 0; i < length; ++i) {
-        result.push(i);
+        result.push(i)
     }
 
-    return result;
+    return result
 };
 
 const createData = () => {
-    const current = new Date();
-    current.setDate(1);
+    const current = new Date()
+    current.setDate(1)
 
-    const startDay = current.getDay();
-    const daysInMonth = getDaysInMonth(current);
+    const startDay = current.getDay()
+    const daysInMonth = getDaysInMonth(current)
 
-    const weeks = createArray(5); 
-    const result = [];
+    const weeks = createArray(5) 
+    const result = []
 
     for (const weekIndex of weeks) {
         result.push({
             week: weekIndex + 1,
             days: []
-        });
+        })
 
         for (let dayIndex = 0; dayIndex < 7; dayIndex++) {
-            const day = dayIndex - startDay + 1 + (weekIndex * 7);
+            const day = dayIndex - startDay + 1 + (weekIndex * 7)
             const isValid = day > 0 && day <= daysInMonth;
 
             result[weekIndex].days.push({
                 dayOfWeek: dayIndex,
                 value: isValid ? day : '',
-            });
+            })
         }
     }
 
-    return result;
-};
+    return result
+}
 
 
 const addCell = (existing, classString, value, isToday) => {
     let cellClass = classString;
+    let inlineStyle = ''
+
     if (isToday) {
-        cellClass += ' table__cell_today';
+        cellClass += ' table__cell_today'
+        inlineStyle = 'background-color: #e0e0ff;'
     }
 
     const result = `
         ${existing}
-        <td class="${cellClass}">
+        <td class="${cellClass}" style="${inlineStyle}">
             &nbsp;${value}&nbsp;
         </td>
-    `;
+    `
 
-    return result;
-};
+    return result
+}
 
 const createHtml = (data) => {
-    let result = '';
+    let result = ''
 
-    const today = new Date();
-    const currentDay = today.getDate();
-    const currentMonth = today.getMonth();
+    const today = new Date()
+    const currentDay = today.getDate()
+    const currentMonth = today.getMonth()
 
     for (const { week, days } of data) {
-        let inner = '';
-        inner = addCell(inner, 'table__cell table__cell_sidebar', `Week ${week}`);
+        let inner = ''
+        inner = addCell(inner, 'table__cell table__cell_sidebar', `Week ${week}`)
 
         for (const { dayOfWeek, value } of days) {
-            const isToday = value === currentDay && currentMonth === new Date().getMonth();
-            const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+            const isToday = value === currentDay && currentMonth === today.getMonth();
+            const isWeekend = dayOfWeek === 0 || dayOfWeek === 6
             const isAlternate = week % 2 === 0;
 
-            let classString = 'table__cell';
+            let classString = 'table__cell'
 
-            if (isToday) classString = `${classString} table__cell_today`;
-            if (isWeekend) classString = `${classString} table__cell_weekend`;
-            if (isAlternate) classString = `${classString} table__cell_alternate`;
+            if (isWeekend) classString += ' table__cell_weekend'
+            if (isAlternate) classString += ' table__cell_alternate'
 
-            inner = addCell(inner, classString, value, isToday);
+            inner = addCell(inner, classString, value, isToday)
         }
 
-        result = `
-            ${result}
-            <tr>${inner}</tr>
-        `;
+        result += `<tr>${inner}</tr>`
     }
 
-    return result;
-};
-
+    return result
+}
 // Only edit above
 
 const current = new Date()
